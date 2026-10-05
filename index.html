@@ -1,11 +1,14 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Random Math Challenge</title>
+
   <style>
     * { box-sizing: border-box; }
+
     body {
       margin: 0;
       min-height: 100vh;
@@ -17,6 +20,7 @@
       background: linear-gradient(135deg, #111827, #312e81);
       color: white;
     }
+
     .card {
       width: min(520px, 100%);
       background: rgba(255,255,255,.10);
@@ -27,6 +31,7 @@
       box-shadow: 0 20px 60px rgba(0,0,0,.30);
       backdrop-filter: blur(12px);
     }
+
     .tag {
       display: inline-block;
       padding: 6px 12px;
@@ -35,8 +40,17 @@
       font-size: 13px;
       margin-bottom: 18px;
     }
-    h1 { margin: 0 0 10px; font-size: 30px; }
-    .subtitle { color: #d1d5db; margin-bottom: 30px; }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 30px;
+    }
+
+    .subtitle {
+      color: #d1d5db;
+      margin-bottom: 30px;
+    }
+
     #problem {
       min-height: 100px;
       display: flex;
@@ -45,8 +59,36 @@
       font-size: clamp(32px, 9vw, 58px);
       font-weight: 800;
       letter-spacing: 1px;
-      margin: 20px 0 30px;
+      margin: 20px 0 20px;
     }
+
+    .input-container {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 15px;
+    }
+
+    #userAnswer {
+      width: 180px;
+      padding: 14px;
+      border: 2px solid rgba(255,255,255,.2);
+      border-radius: 14px;
+      background: rgba(255,255,255,.12);
+      color: white;
+      font-size: 20px;
+      text-align: center;
+      outline: none;
+    }
+
+    #userAnswer::placeholder {
+      color: #9ca3af;
+    }
+
+    #userAnswer:focus {
+      border-color: #a5b4fc;
+    }
+
     button {
       border: 0;
       border-radius: 14px;
@@ -58,78 +100,238 @@
       color: #1f2937;
       transition: transform .15s, opacity .15s;
     }
-    button:hover { transform: translateY(-2px); }
-    button:active { transform: translateY(0); opacity: .85; }
-    .answer {
-      margin-top: 22px;
-      min-height: 28px;
-      color: #c7d2fe;
-      font-weight: 600;
+
+    button:hover {
+      transform: translateY(-2px);
     }
-    .footer { margin-top: 28px; color: #9ca3af; font-size: 12px; }
+
+    button:active {
+      transform: translateY(0);
+      opacity: .85;
+    }
+
+    #checkAnswer {
+      background: #a5b4fc;
+      color: #111827;
+    }
+
+    #newProblem {
+      margin-top: 10px;
+    }
+
+    .result {
+      min-height: 32px;
+      margin-top: 18px;
+      font-size: 20px;
+      font-weight: 800;
+    }
+
+    .correct {
+      color: #86efac;
+    }
+
+    .wrong {
+      color: #fca5a5;
+    }
+
+    .footer {
+      margin-top: 28px;
+      color: #9ca3af;
+      font-size: 12px;
+    }
   </style>
+
 </head>
+
 <body>
+
   <main class="card">
-    <div class="tag">🧠 RANDOM MATH CHALLENGE</div>
-    <h1>Solve This!</h1>
-    <div class="subtitle">A new problem is generated every time you open or refresh this page.</div>
 
-    <div id="problem">Loading...</div>
+```
+<div class="tag">🧠 RANDOM MATH CHALLENGE</div>
 
-    <button id="newProblem">🎲 New Problem</button>
-    <div class="answer" id="answer"></div>
+<h1>Solve This!</h1>
 
-    <div class="footer">Scan the QR code again for another challenge.</div>
+<div class="subtitle">
+  Solve the problem and enter your answer.
+</div>
+
+<div id="problem">Loading...</div>
+
+<div class="input-container">
+  <input
+    type="number"
+    id="userAnswer"
+    placeholder="Your answer"
+    inputmode="numeric"
+  >
+
+  <button id="checkAnswer">Check</button>
+</div>
+
+<div class="result" id="result"></div>
+
+<button id="newProblem">🎲 New Problem</button>
+
+<div class="footer">
+  A new challenge is generated every time you open or refresh this page.
+</div>
+```
+
   </main>
 
   <script>
+
     function randomInt(min, max) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
     function generateProblem() {
+
       const operations = ["+", "-", "×", "÷"];
+
       const op = operations[randomInt(0, operations.length - 1)];
-      let a, b, answer, text;
+
+      let a;
+      let b;
+      let answer;
+      let text;
+
+      /*
+        All problems use TWO-DIGIT numbers.
+        Range: 10–99
+      */
 
       if (op === "+") {
-        a = randomInt(10, 999);
-        b = randomInt(10, 999);
+
+        a = randomInt(10, 99);
+        b = randomInt(10, 99);
+
         answer = a + b;
+
         text = `${a} + ${b} = ?`;
-      } else if (op === "-") {
-        a = randomInt(10, 999);
+
+      }
+
+      else if (op === "-") {
+
+        // Keep the result positive
+        a = randomInt(10, 99);
         b = randomInt(10, a);
+
         answer = a - b;
+
         text = `${a} − ${b} = ?`;
-      } else if (op === "×") {
-        a = randomInt(2, 50);
-        b = randomInt(2, 30);
+
+      }
+
+      else if (op === "×") {
+
+        a = randomInt(10, 99);
+        b = randomInt(10, 99);
+
         answer = a * b;
+
         text = `${a} × ${b} = ?`;
-      } else {
-        // Generate clean integer division problems.
-        b = randomInt(2, 20);
-        answer = randomInt(2, 50);
-        a = b * answer;
+
+      }
+
+      else {
+
+        /*
+          Two-digit ÷ two-digit with a whole-number answer.
+
+          Example:
+          84 ÷ 12 = 7
+          96 ÷ 16 = 6
+        */
+
+        do {
+          b = randomInt(10, 99);
+          answer = randomInt(1, 9);
+          a = b * answer;
+        } while (a < 10 || a > 99);
+
         text = `${a} ÷ ${b} = ?`;
       }
 
       document.getElementById("problem").textContent = text;
-      document.getElementById("answer").textContent = "";
+
       document.getElementById("problem").dataset.answer = answer;
+
+      // Clear previous answer
+      document.getElementById("userAnswer").value = "";
+
+      // Clear result
+      document.getElementById("result").textContent = "";
+
+      document.getElementById("result").className = "result";
+
+      // Put cursor in answer box
+      document.getElementById("userAnswer").focus();
     }
 
-    document.getElementById("newProblem").addEventListener("click", generateProblem);
 
-    // Optional: tap the problem itself to reveal the answer.
-    document.getElementById("problem").addEventListener("click", () => {
-      const answer = document.getElementById("problem").dataset.answer;
-      document.getElementById("answer").textContent = `Answer: ${answer}`;
-    });
+    function checkAnswer() {
 
+      const input = document.getElementById("userAnswer").value.trim();
+
+      const result = document.getElementById("result");
+
+      const correctAnswer =
+        Number(document.getElementById("problem").dataset.answer);
+
+      if (input === "") {
+
+        result.textContent = "⚠️ Enter an answer first!";
+        result.className = "result wrong";
+
+        return;
+      }
+
+      const userAnswer = Number(input);
+
+      if (userAnswer === correctAnswer) {
+
+        result.textContent = "🎉 Correct!";
+        result.className = "result correct";
+
+      } else {
+
+        result.textContent = "❌ Wrong! Try again.";
+        result.className = "result wrong";
+      }
+    }
+
+
+    // Check button
+    document
+      .getElementById("checkAnswer")
+      .addEventListener("click", checkAnswer);
+
+
+    // New problem button
+    document
+      .getElementById("newProblem")
+      .addEventListener("click", generateProblem);
+
+
+    // Press Enter to check answer
+    document
+      .getElementById("userAnswer")
+      .addEventListener("keydown", function(event) {
+
+        if (event.key === "Enter") {
+          checkAnswer();
+        }
+
+      });
+
+
+    // Generate first problem
     generateProblem();
+
   </script>
+
 </body>
 </html>
